@@ -1,0 +1,41 @@
+---
+title: "Advent of Code 2022: Day 1"
+output: html_notebook
+---
+
+```{r}
+calories_dat <- read_lines("data/day1_input") |> as.integer()
+
+num_elves <- sum(is.na(calories_dat)) + 1
+elf_sums <- integer(num_elves)
+
+line_index <- 1
+elf_index <- 1
+
+while (line_index <= length(calories_dat)) {
+  current_value <- calories_dat[line_index]
+  this_elf_sum <- 0
+  
+  if (is.na(current_value)) {
+    line_index <- line_index + 1
+  }
+  else {
+    while (!is.na(current_value)) {
+      this_elf_sum <- this_elf_sum + current_value
+      line_index <- line_index + 1
+      current_value <- calories_dat[line_index]
+    }
+    elf_sums[elf_index] <- this_elf_sum
+    elf_index <- elf_index + 1
+  }
+}
+```
+
+```{r}
+max(elve_sums)
+```
+
+```{r}
+sort(elve_sums, decreasing = TRUE)[1:3] |> sum()
+```
+
