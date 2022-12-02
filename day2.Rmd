@@ -1,0 +1,37 @@
+---
+title: "Advent of V1 2022: Day 2"
+author: "Shih Ching Fu"
+format: html
+---
+
+```{r}
+strategy <- read_lines("data/day2_input") 
+
+strategy[strategy == "A X"] = 4
+strategy[strategy == "A Y"] = 8
+strategy[strategy == "A Z"] = 3
+strategy[strategy == "B X"] = 1
+strategy[strategy == "B Y"] = 5
+strategy[strategy == "B Z"] = 9
+strategy[strategy == "C X"] = 7
+strategy[strategy == "C Y"] = 2
+strategy[strategy == "C Z"] = 6
+
+strategy |> as.integer() |> sum()
+```
+
+```{r}
+strategy2 <- read_lines("data/day2_input") 
+
+strategy2[strategy2 == "A X"] = 3
+strategy2[strategy2 == "A Y"] = 4
+strategy2[strategy2 == "A Z"] = 8
+strategy2[strategy2 == "B X"] = 1
+strategy2[strategy2 == "B Y"] = 5
+strategy2[strategy2 == "B Z"] = 9
+strategy2[strategy2 == "C X"] = 2
+strategy2[strategy2 == "C Y"] = 6
+strategy2[strategy2 == "C Z"] = 7
+
+strategy2 |> as.integer() |> sum()
+```
