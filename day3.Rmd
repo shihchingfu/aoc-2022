@@ -1,0 +1,71 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(readr)
+library(dplyr)
+```
+
+```{r}
+priorities <- data.frame(
+  item = c(letters, LETTERS),
+  priority = 1:52
+)
+```
+
+```{r}
+rucksacks <- read_lines("data/day3_input") 
+
+n_rucksacks <- length(rucksacks)
+common_items <- character(n_rucksacks)
+
+for (rucksack in seq_along(rucksacks)) {
+  this_rucksack = rucksacks[rucksack]
+  num_items <- nchar(this_rucksack)
+  
+  compartment1 <- strsplit(substr(this_rucksack, 1, num_items/2), split = "")[[1]]
+  compartment2 <- strsplit(substr(this_rucksack, num_items/2 + 1, num_items), split = "")[[1]]
+  
+  common_item <- intersect(compartment1, compartment2)
+  common_items[rucksack] <- common_item
+}
+
+common_items_df <- data.frame(item = common_items)
+
+common_items_df |> 
+  left_join(priorities,by = "item") |> 
+  pull(priority) |> 
+  sum()
+```
+
+```{r}
+n_rucksacks <- length(rucksacks)
+n_groups <- n_rucksacks/3
+badge_items <- character(n_groups)
+
+rucksacks_df <- data.frame(
+  group = rep(1:n_rucksacks, each = 3),
+  items = rucksacks
+)
+
+for (this_group in 1:n_groups)  {
+  this_group_rucksacks <- rucksacks_df |> 
+    filter(group == this_group)
+  
+  sack1 <- strsplit(this_group_rucksacks[1,]$items, split = "")[[1]]
+  sack2 <- strsplit(this_group_rucksacks[2,]$items, split = "")[[1]]
+  sack3 <- strsplit(this_group_rucksacks[3,]$items, split = "")[[1]]
+  
+  badge_item <- intersect(intersect(sack1, sack2), sack3)
+  badge_items[this_group] <- badge_item
+}
+
+badge_items_df <- data.frame(item = badge_items)
+
+badge_items_df |> 
+  left_join(priorities, "item") |> 
+  pull(priority) |> 
+  sum()
+```

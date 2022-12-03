@@ -5,6 +5,11 @@ format: html
 ---
 
 ```{r}
+library(readr)
+```
+
+
+```{r}
 strategy <- read_lines("data/day2_input") 
 
 strategy[strategy == "A X"] = 4
