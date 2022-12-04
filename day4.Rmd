@@ -1,0 +1,34 @@
+---
+title: "Advent of Code: Day 4"
+output: html_notebook
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyr)
+```
+
+```{r}
+sections <- read_lines("data/day4_input") 
+
+sections_df <- data.frame(sections) |> 
+  separate(col = sections, into = c("lo1", "hi1", "lo2", "hi2")) |> 
+  mutate(across(everything(), as.integer)) |> 
+  rowwise() |> 
+  mutate(first_in_sec = (lo1 >= lo2) & (hi1 <= hi2),
+         sec_in_first = (lo2 >= lo1) & (hi2 <= hi1),
+         contained = first_in_sec | sec_in_first) 
+
+sections_df |> pull(contained) |> sum()
+```
+
+```{r}
+sections2_df <- data.frame(sections) |> 
+  separate(col = sections, into = c("lo1", "hi1", "lo2", "hi2")) |> 
+  mutate(across(everything(), as.integer)) |> 
+  rowwise() |> 
+  mutate(overlapped = !(hi1 < lo2 | hi2 < lo1))
+
+sections2_df |> pull(overlapped) |> sum()
+```

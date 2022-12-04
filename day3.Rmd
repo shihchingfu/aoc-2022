@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "Advent of Code 2022: Day 3"
 output: html_notebook
 ---
 
