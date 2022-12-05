@@ -1,0 +1,64 @@
+---
+title: "Advent of Code: Day 5"
+output: html_notebook
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyr)
+```
+
+```{r}
+stack1 <- c("Q", "H", "C", "T", "N", "S", "V", "B")
+stack2 <- c("G", "B", "D", "W")
+stack3 <- c("B", "Q", "S", "T", "R", "W", "F")
+stack4 <- c("N", "D", "J", "Z", "S", "W", "G", "L")
+stack5 <- c("F", "V", "D", "P", "M")
+stack6 <- c("J", "W", "F")
+stack7 <- c("V", "J", "B", "Q", "N", "L")
+stack8 <- c("N", "S", "Q", "J", "C", "R", "T", "G")
+stack9 <- c("M", "D", "W", "C", "Q", "S", "J")
+
+stacks <- list(stack1, stack2, stack3, stack4, stack5, stack6, stack7, stack8, stack9)
+stacks2 <- stacks
+
+instructions <- data.frame(x = read_lines(file = "data/day5_input", skip = 10)) |> 
+  separate(col = x,
+           into = c(NA, "num", NA, "from", NA, "to")) |> 
+  mutate(across(everything(), as.integer))
+
+
+num_instructions <- NROW(instructions)
+
+for (instruction in 1:num_instructions) {
+  this_instruction <- instructions[instruction,]
+  
+  for (move in 1:this_instruction$num) {
+    from_stack <- stacks[[this_instruction$from]]
+    this_item <- from_stack[1]
+    
+    stacks[[this_instruction$from]] <- stacks[[this_instruction$from]][-1]
+    stacks[[this_instruction$to]] <- c(this_item, stacks[[this_instruction$to]])
+  }
+}
+
+stacks
+```
+
+
+```{r}
+num_instructions <- NROW(instructions)
+
+for (instruction in 1:num_instructions) {
+  this_instruction <- instructions[instruction,]
+  
+  from_stack <- stacks2[[this_instruction$from]]
+  these_items <- from_stack[1:this_instruction$num]
+    
+  stacks2[[this_instruction$from]] <- stacks2[[this_instruction$from]][-c(1:this_instruction$num)]
+  stacks2[[this_instruction$to]] <- c(these_items, stacks2[[this_instruction$to]])
+
+stacks2
+```
+
