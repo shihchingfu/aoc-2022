@@ -1,0 +1,37 @@
+---
+title: "Advent of Code: Day 6"
+output: html_notebook
+---
+
+```{r}
+library(readr)
+```
+
+```{r}
+buffer <- strsplit(read_lines(file = "data/day6_input"), split = "")[[1]]
+buffer_length <- length(buffer)
+```
+
+```{r}
+for (index in 1:buffer_length) {
+  four_chars <- buffer[index:(index+3)]
+  unique_chars <- unique(four_chars)
+  
+  if (length(unique_chars) == 4) {
+    cat(index + 3, "\n")
+    break
+  }
+}
+```
+
+```{r}
+for (index in 1:buffer_length) {
+  fourteen_chars <- buffer[index:(index+13)]
+  unique_chars <- unique(fourteen_chars)
+  
+  if (length(unique_chars) == 14) {
+    cat(index + 13, "\n")
+    break
+  }
+}
+```
