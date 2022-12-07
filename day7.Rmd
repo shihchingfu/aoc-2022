@@ -1,0 +1,93 @@
+---
+title: "Advent of Code: Day 7"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+lines <- read_lines(file = "data/day7_input")
+num_lines <- length(lines)
+```
+
+```{r}
+paths <- {}
+folder_sizes <- {}
+current_path = ""
+
+for (line_index in 1:num_lines) {
+  line <- strsplit(lines[line_index], " ")[[1]]
+    
+  if (line[1] == "$") {
+    if (line[2] == "cd") {
+      if (line[3] == "/") {
+        current_path <- "/"
+        paths <- c(paths, current_path)
+      }
+      else 
+        if (line[3] == "..") {
+        current_path_split <- strsplit(x = current_path, split = "/")[[1]]
+        new_path <- paste0(current_path_split[-length(current_path_split)], collapse = "/")
+        current_path <- paste0(new_path,"/")
+      }
+      else {
+        current_path <- paste0(current_path, line[3], "/")
+        paths <- c(paths, current_path)
+      }
+    }
+    else if (line[2] == "ls") {
+      next_line <- strsplit(lines[line_index + 1], " ")[[1]]
+      this_folder_size <- 0
+      while (next_line[1] != "$") {
+        if (next_line[1] != "dir") {
+          this_folder_size <- this_folder_size + as.integer(next_line[1])
+        }
+        line_index <- line_index + 1
+        next_line <- strsplit(lines[line_index + 1], " ")[[1]]
+        
+        if (is.na(next_line[1]))
+          break
+      }
+      folder_sizes <- c(folder_sizes, this_folder_size)
+    }
+  }
+}
+
+path_sizes <- data.frame(
+  path = paths,
+  size = folder_sizes
+)
+
+for (f in 1:NROW(path_sizes)) {
+  
+  path_sizes$total_size[f] <- path_sizes |> 
+    rowwise() |> 
+    filter(str_detect(path, path_sizes$path[f])) |> 
+    pull(size) |> 
+    sum()
+}
+```
+
+
+```{r}
+path_sizes |> 
+  filter(total_size <= 100000) |> 
+  pull(total_size) |> 
+  sum()
+```
+
+```{r}
+30000000 - (70000000 - path_sizes$total_size[1])
+```
+
+```{r}
+path_sizes |> 
+  arrange(total_size) |> 
+  filter(total_size > 2677139)
+
+```
+
+
+
