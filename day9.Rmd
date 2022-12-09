@@ -1,0 +1,115 @@
+---
+title: "Advent of Code: Day 9"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+lines <- read_lines(file = "data/day9_input") 
+
+moves <- lines |> 
+  as.data.frame() |> 
+  separate(col = "lines", into = c("direction", "steps")) |> 
+  mutate(direction = factor(direction),
+         steps = as.integer(steps))
+```
+
+```{r}
+num_moves <- NROW(moves)
+
+head_position <- c(0,0)
+tail_position <- c(0,0)
+
+head_positions <- head_position
+tail_positions <- tail_position
+
+is_adjacent <- function(h, t) {
+  return (abs(h[1] - t[1]) <= 1 & abs(h[2] - t[2]) <= 1)
+}
+
+for (move_index in 1:num_moves) {
+  this_move <- moves[move_index,]
+  
+  for (step in 1:this_move$steps) {
+    new_head_position <- head_position
+    
+    if (this_move$direction == "L") {
+      new_head_position <- head_position + c(0,-1)
+    } else if (this_move$direction == "R") {
+      new_head_position <- head_position + c(0,1)
+    } else if (this_move$direction == "D") {
+      new_head_position <- head_position + c(1,0)
+    } else if (this_move$direction == "U") {
+      new_head_position <- head_position + c(-1,0)
+    }
+    
+    if (!is_adjacent(new_head_position, tail_position)) {
+      tail_position <- head_position
+    }
+    
+    head_position <- new_head_position
+    
+    head_positions <- rbind(head_positions, head_position)
+    tail_positions <- rbind(tail_positions, tail_position)
+  }
+}
+```
+
+```{r}
+data.frame(tail_positions) |> 
+  distinct() |> 
+  NROW()
+```
+
+```{r}
+num_moves <- NROW(moves)
+num_knots <- 10
+knot_positions <- data.frame(row = rep(0, num_knots),
+                             col = rep(0, num_knots))
+
+head_positions <- knot_positions[1,]
+tail_positions <- knot_positions[num_knots,]
+
+follow <- function(leader, follower) {
+  offset <- leader - follower
+  if (abs(offset[1]) > 1 | abs(offset[2]) > 1) {
+    return(follower + sign(offset))
+  }
+  else
+    return(follower)
+}
+
+for (move_index in 1:num_moves) {
+  
+  head_move <- moves[move_index,]
+  head_move_incr <- switch(as.character(head_move$direction),
+                      "L" = c(0,-1),
+                      "R" = c(0,1),
+                      "D" = c(1,0),
+                      "U" = c(-1,0))
+
+  for (step in 1:head_move$steps) { 
+    
+    knot_positions[1,] <- knot_positions[1, ] + head_move_incr
+    
+    for (knot in 2:num_knots) {
+      parent_knot_position <- knot_positions[knot-1,]
+      this_knot_position <- knot_positions[knot,]
+      
+      knot_positions[knot,] <- follow(parent_knot_position, this_knot_position)
+    }
+    
+    head_positions <- rbind(head_positions, knot_positions[1,])
+    tail_positions <- rbind(tail_positions, knot_positions[num_knots,])
+  }
+}
+    
+```
+
+```{r}
+tail_positions |> distinct() |> NROW()
+```
+
