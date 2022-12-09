@@ -1,0 +1,73 @@
+---
+title: "Advent of Code: Day 8"
+output: html_notebook
+---
+
+```{r}
+library(readr)
+```
+
+```{r}
+lines <- read_lines(file = "data/day8_input") 
+n_rows <- length(lines)
+n_cols <- str_length(lines[1])
+
+trees <- matrix(nrow = 99, ncol = 99)
+
+for (i in 1:length(lines)) {
+  this_line <- lines[i]
+  
+  for (j in 1:str_length(this_line)) {
+    trees[i,j] <- as.integer(substr(this_line, start = j, stop = j))
+  }
+}
+```
+
+```{r}
+visible_trees <- matrix(nrow = n_rows, ncol = n_cols)
+
+for (row in 2:(n_rows - 1)) {
+  for (col in 2:(n_cols - 1)) {
+    this_tree <- trees[row,col]
+    trees_above <- trees[1:(row-1), col]
+    trees_below <- trees[(row+1):n_rows, col]
+    trees_left <- trees[row, 1:(col-1)]
+    trees_right <- trees[row, (col+1):n_cols]
+    
+    visible_trees[row, col] <- 
+      max(trees_above) < this_tree | 
+      max(trees_below) < this_tree | 
+      max(trees_left) < this_tree |
+      max(trees_right) < this_tree
+  }
+}
+
+sum(visible_trees, na.rm = TRUE) + n_rows + n_cols + (n_rows-2) + (n_cols-2)
+```
+
+
+```{r}
+scenic_scores <- matrix(rep(0, n_rows*n_cols), nrow = n_rows, ncol = n_cols)
+
+for (row in 2:(n_rows - 1)) {
+  for (col in 2:(n_cols - 1)) {
+    this_tree <- trees[row,col]
+    look_up <- trees[(row-1):1, col]
+    look_down <- trees[(row+1):n_rows, col]
+    look_left <- trees[row, (col-1):1]
+    look_right <- trees[row, (col+1):n_cols]
+    
+    scenic_score <- 
+      match(FALSE, look_up < this_tree, nomatch = length(look_up)) * 
+      match(FALSE, look_down < this_tree, nomatch = length(look_down)) *
+      match(FALSE, look_left < this_tree, nomatch = length(look_left)) *
+      match(FALSE, look_right < this_tree, nomatch = length(look_right))
+
+    scenic_scores[row, col] <- scenic_score
+  }
+}
+
+max(scenic_scores)
+```
+
+
