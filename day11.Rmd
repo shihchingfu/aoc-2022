@@ -1,0 +1,131 @@
+---
+title: "Advent of Code: Day 11"
+output: html_notebook
+---
+
+```{r}
+lines <- readr::read_lines(file = "data/day11_input")
+```
+
+```{r}
+num_rounds <- 10000
+num_monkeys <- 8
+
+RELIEF_REDUCTION_FACTOR <- 1
+
+monkey_items <- list(
+  monkey0  = c(84, 66, 62, 69, 88, 91, 91),
+  monkey1 = c(98, 50, 76, 99),
+  monkey2 = c(72, 56, 94),
+  monkey3 = c(55, 88, 90, 77, 60, 67),
+  monkey4 = c(69, 72, 63, 60, 72, 52, 63, 78),
+  monkey5 = c(89, 73),
+  monkey6 = c(78, 68, 98, 88, 66),
+  monkey7 = c(70)
+)
+
+gcm <- 2*7*13*3*19*17*11*5
+
+monkey_inspections <- rep(0,8)
+
+for (r in 1:num_rounds) {
+  
+  for (m in 1:num_monkeys) {
+    
+    items <- monkey_items[[m]]
+    num_items <- length(items)
+    
+    if (num_items > 0) {
+      
+      for (i in 1:num_items) {
+        monkey_inspections[m] <- monkey_inspections[m] + 1
+        if (m == 1) { # Monkey 0
+          new_item <- floor(items[i] * 11 / RELIEF_REDUCTION_FACTOR) %% gcm
+          if (new_item %% 2 == 0) {
+            monkey_items[[5]] <- c(monkey_items[[5]], new_item)
+          } else {
+            monkey_items[[8]] <- c(monkey_items[[8]], new_item)
+          }
+          monkey_items[[m]] <- monkey_items[[m]][-1]
+        }
+        else if (m == 2) {
+          new_item <- floor(items[i]^2 / RELIEF_REDUCTION_FACTOR) %% gcm
+          
+          if (new_item %% 7 == 0) {
+            monkey_items[[4]] <- c(monkey_items[[4]], new_item)
+          } else {
+            monkey_items[[7]] <- c(monkey_items[[7]], new_item)
+          }
+          monkey_items[[m]] <- monkey_items[[m]][-1]
+        }
+        else if (m == 3) {
+          new_item <- floor((items[i] + 1) / RELIEF_REDUCTION_FACTOR) %% gcm
+          
+          if (new_item %% 13 == 0) {
+            monkey_items[[5]] <- c(monkey_items[[5]], new_item)
+          } else {
+            monkey_items[[1]] <- c(monkey_items[[1]], new_item)
+          }
+          monkey_items[[m]] <- monkey_items[[m]][-1]
+        }
+        else if (m == 4) { # Monkey 3
+          new_item <- floor((items[i] + 2) / RELIEF_REDUCTION_FACTOR) %% gcm
+          
+          if (new_item %% 3 == 0) {
+            monkey_items[[7]] <- c(monkey_items[[7]], new_item)
+          } else {
+            monkey_items[[6]] <- c(monkey_items[[6]], new_item)
+          }
+          monkey_items[[m]] <- monkey_items[[m]][-1]
+        }
+        else if (m == 5) { # Monkey 4
+          new_item <- floor((items[i] * 13) / RELIEF_REDUCTION_FACTOR) %% gcm
+          
+          if (new_item %% 19 == 0) {
+            monkey_items[[2]] <- c(monkey_items[[2]], new_item)
+          } else {
+            monkey_items[[8]] <- c(monkey_items[[8]], new_item)
+          }
+          monkey_items[[m]] <- monkey_items[[m]][-1]
+        }
+        else if (m == 6) { # Monkey 5
+          new_item <- floor((items[i] + 5) / RELIEF_REDUCTION_FACTOR) %% gcm
+          
+          if (new_item %% 17 == 0) {
+            monkey_items[[3]] <- c(monkey_items[[3]], new_item)
+          } else {
+            monkey_items[[1]] <- c(monkey_items[[1]], new_item)
+          }
+          monkey_items[[m]] <- monkey_items[[m]][-1]
+        }
+        else if (m == 7) { # Monkey 6
+          new_item <- floor((items[i] + 6) / RELIEF_REDUCTION_FACTOR) %% gcm
+          
+          if (new_item %% 11 == 0) {
+            monkey_items[[3]] <- c(monkey_items[[3]], new_item)
+          } else {
+            monkey_items[[6]] <- c(monkey_items[[6]], new_item)
+          }
+          monkey_items[[m]] <- monkey_items[[m]][-1]
+        }
+        else if (m == 8) { # Monkey 7
+          new_item <- floor((items[i] + 7) / RELIEF_REDUCTION_FACTOR) %% gcm
+          
+          if (new_item %% 5 == 0) {
+            monkey_items[[2]] <- c(monkey_items[[2]], new_item)
+          } else {
+            monkey_items[[4]] <- c(monkey_items[[4]], new_item)
+          }
+          monkey_items[[m]] <- monkey_items[[m]][-1]
+        }
+      }
+    }      
+  }
+}
+```
+
+```{r}
+prod(sort(monkey_inspections, decreasing = TRUE)[1:2])
+```
+
+
