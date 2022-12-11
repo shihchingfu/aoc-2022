@@ -16,5 +16,5 @@ AutoAppendNewline: Yes
 StripTrailingWhitespace: Yes
 
 PythonType: conda
-PythonVersion: 3.9.12
-PythonPath: C:/Miniconda3/python.exe
+PythonVersion: 3.11.0
+PythonPath: C:/Users/shihc/.conda/envs/my-env/python.exe

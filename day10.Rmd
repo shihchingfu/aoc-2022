@@ -1,0 +1,74 @@
+---
+title: "Advent of Code: Day 10"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+instructions <- data.frame(
+  lines = read_lines(file = "data/day10_input")) |> 
+  separate(col = lines, into = c("instruction", "value"), sep = 4) |> 
+  mutate(value = as.integer(value))
+```
+
+```{r}
+n_instructions <- NROW(instructions)
+current_cycle <- 1
+current_X <- 1
+
+output <- data.frame(cycle = current_cycle, X = current_X)
+
+for (instruction_index in 1:n_instructions) {
+  this_instruction <- instructions[instruction_index,]
+  
+  if (this_instruction$instruction == "noop") {
+    current_cycle <- current_cycle + 1
+    output <- rbind(output, c(current_cycle, current_X)) 
+  }
+  else if (this_instruction$instruction == "addx") {
+    current_cycle <- current_cycle + 1
+    output <- rbind(output, c(current_cycle, current_X)) 
+    
+    current_X <- current_X + this_instruction$value
+    current_cycle <- current_cycle + 1
+    output <- rbind(output, c(current_cycle, current_X))
+  }
+}
+
+output <- output |> 
+  mutate(strength = cycle * X) 
+```
+
+
+```{r}
+output[c("20", "60", "100", "140", "180", "220"),] |> 
+  janitor::adorn_totals()
+```
+
+```{r}
+n_rows <- 6
+n_cols <- 40
+n_cycles <- max(output$cycle)
+
+CRT <- matrix(NA, nrow = n_rows, ncol = n_cols)
+
+for (cycle in 1:(n_cycles-1)) {
+  row_index <- (cycle-1) %/% n_cols
+  col_index <- (cycle-1) %% n_cols
+  
+  this_X <- output$X[cycle]
+
+  if (abs(col_index - this_X) <= 1)
+    CRT[row_index+1, col_index+1] = "#"
+  else
+    CRT[row_index+1, col_index+1] = "."
+}
+```
+
+```{r}
+CRT
+```
+
